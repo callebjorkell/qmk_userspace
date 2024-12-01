@@ -363,24 +363,24 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             case _SWE:
             case _DAN:
                 if (clockwise) {
-                    tap_code(KC_VOLD);
-                } else {
                     tap_code(KC_VOLU);
+                } else {
+                    tap_code(KC_VOLD);
                 }
                 break;
             default:
                 if (clockwise) {
-                    SEND_STRING(SS_LGUI(SS_LALT(SS_LSFT("y"))));
-                } else {
                     SEND_STRING(SS_LGUI(SS_LALT(SS_LSFT("u"))));
+                } else {
+                    SEND_STRING(SS_LGUI(SS_LALT(SS_LSFT("y"))));
                 }
                 break;
         }
     } else if (index == 1) {
         if (clockwise) {
-            tap_code(KC_MPRV);
-        } else {
             tap_code(KC_MNXT);
+        } else {
+            tap_code(KC_MPRV);
         }
     }
     return false;
