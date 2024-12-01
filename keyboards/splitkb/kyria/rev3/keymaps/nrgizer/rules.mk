@@ -5,6 +5,6 @@ RGBLIGHT_ENABLE = yes      # Enable keyboard RGB underglow
 LEADER_ENABLE = yes        # Enable the Leader Key feature
 MOUSEKEY_ENABLE = no
 TAP_DANCE_ENABLE = yes
-DYNAMIC_MACRO_ENABLE = no  # This doesn't work. The OLEDs die, and the whole kb becomes weird. (try again now on rev3?)
+DYNAMIC_MACRO_ENABLE = yes
 
 CONVERT_TO=liatris
