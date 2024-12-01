@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+#include "gpio.h"
 
 enum layers {
     _COLEMAK = 0,
@@ -140,6 +141,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
 };
+
+// Disable the onboard LED, it's fairly bright.
+void keyboard_pre_init_user(void) {
+    gpio_set_pin_output(24);
+    gpio_write_pin_high(24);
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uint8_t mods = get_mods();
