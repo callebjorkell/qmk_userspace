@@ -115,8 +115,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_SHORT] = LAYOUT(
       _______, _______, _______, _______, _______, _______,                                    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,  XXXXXXX, _______,
+#ifdef RGB_MATRIX_ENABLE
+      _______, _______, DM_REC1, DM_RSTP, DM_PLY1, _______,                                    RM_TOGG, RM_SATU, RM_HUEU, RM_VALU, RM_NEXT, _______,
+      _______, _______, DM_REC2, DM_RSTP, DM_PLY2, _______,_______, _______, _______, _______, _______, RM_SATD, RM_HUED, RM_VALD, RM_PREV, _______,
+#else
       _______, _______, DM_REC1, DM_RSTP, DM_PLY1, _______,                                    RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
       _______, _______, DM_REC2, DM_RSTP, DM_PLY2, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
+#endif
                                  HUE_TOG, LOCK_1P, SHOW_1P,_______, _______, _______, _______, _______, _______, _______
     ),
 
@@ -211,27 +216,57 @@ tap_dance_action_t tap_dance_actions[] = {
     [TD_LAYER] = ACTION_TAP_DANCE_FN(dance_lang),
 };
 
+#ifdef RGB_MATRIX_ENABLE
+void keyboard_post_init_user(void) {
+    rgb_matrix_enable_noeeprom();
+    rgb_matrix_sethsv_noeeprom(HSV_BASE);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    switch(get_highest_layer(state)) {
+        case _RUNNER:
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_BREATHING); // Set to breathing mode
+            break;
+        default:
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR); // Set to solid color mode
+            break;
+    }
+    return state;
+}
+
+// this is called every time the LEDs are to be refreshed. Changing modes here will cause issues, as it will
+// cause another refresh.
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    switch(get_highest_layer(layer_state|default_layer_state)) {
+        case _RUNNER:
+            rgb_matrix_sethsv_noeeprom(HSV_BLUE);
+            break;
+        case _SWE:
+            rgb_matrix_sethsv_noeeprom(HSV_SWE);
+            break;
+        case _DAN:
+            rgb_matrix_sethsv_noeeprom(HSV_DAN);
+            break;
+        default:
+            rgb_matrix_sethsv_noeeprom(HSV_BASE);
+            break;
+    }
+    return false;
+}
+#endif
+
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case LT(_NAVS,KC_T):
       return TAPPING_TERM - 45;
     case LSFT_T(KC_A):
-      return TAPPING_TERM + 50;
+      return TAPPING_TERM + 40;
     default:
       return TAPPING_TERM;
   }
 }
 
-void rgblight_set_hsv_and_mode(uint8_t hue, uint8_t sat, uint8_t val, uint8_t mode) {
-    rgblight_mode_noeeprom(mode);
-    wait_us(175);  // Add a slight delay between color and mode to ensure it's processed correctly
-    rgblight_sethsv_noeeprom(hue, sat, val);
-}
-
-void keyboard_post_init_user(void){
-    rgblight_enable_noeeprom();
-    rgblight_set_hsv_and_mode(HSV_BASE, RGBLIGHT_MODE_STATIC_LIGHT);
-}
 
 #ifdef LEADER_ENABLE
 void leader_end_user(void) {
@@ -248,10 +283,22 @@ void leader_end_user(void) {
 }
 #endif
 
+#ifdef RGBLIGHT_ENABLE
+void rgblight_set_hsv_and_mode(uint8_t hue, uint8_t sat, uint8_t val, uint8_t mode) {
+    rgblight_mode_noeeprom(mode);
+    rgblight_sethsv_noeeprom(hue, sat, val);
+}
+
+void keyboard_post_init_user(void){
+    rgblight_enable_noeeprom();
+    rgblight_set_hsv_and_mode(HSV_BASE, RGBLIGHT_MODE_STATIC_LIGHT);
+}
+#endif
+
 uint8_t last_rgb_layer = _COLEMAK;
 
-layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef RGBLIGHT_ENABLE
+layer_state_t layer_state_set_user(layer_state_t state) {
     uint8_t layer = get_highest_layer(state);
 
     if (last_rgb_layer != layer) {
@@ -274,9 +321,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
                 break;
         }
     }
-#endif
     return state;
 }
+#endif
 
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {

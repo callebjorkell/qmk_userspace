@@ -35,8 +35,23 @@
     #endif
 #endif
 
+#ifdef RGB_MATRIX_ENABLE
+    #define ENABLE_RGB_MATRIX_BREATHING
+    #define ENABLE_RGB_MATRIX_SOLID_COLOR
+    #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
+    #define ENABLE_RGB_MATRIX_TYPING_HEATMAP
+    #define ENABLE_RGB_MATRIX_RAINBOW_BEACON
+
+    #define RGB_MATRIX_TYPING_HEATMAP_DECREASE_DELAY_MS 50
+    #ifndef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+        #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 175
+    #endif
+    #define RGB_MATRIX_SLEEP
+#endif
+
+// https://docs.qmk.fm/config_options#behaviors-that-can-be-configured
 #define TAPPING_TERM_PER_KEY
-#define TAPPING_TERM 210
+#define TAPPING_TERM 190
 
 #define ENCODER_RESOLUTION 2
 
@@ -48,4 +63,7 @@
 
 // Allows media codes to properly register in macros and rotary encoder code
 #define TAP_CODE_DELAY 10
-#define DYNAMIC_MACRO_NO_NESTING
+
+// Dynamic macros https://docs.qmk.fm/features/dynamic_macros#customization
+#define DYNAMIC_MACRO_NO_NESTING // Do not allow macros inside of macros
+#define DYNAMIC_MACRO_SIZE 256  // Default 128
