@@ -36,18 +36,23 @@
 #endif
 
 #ifdef RGB_MATRIX_ENABLE
+    #define RGB_MATRIX_SLEEP
+
     #define ENABLE_RGB_MATRIX_BREATHING
     #define ENABLE_RGB_MATRIX_SOLID_COLOR
     #define ENABLE_RGB_MATRIX_SOLID_REACTIVE_WIDE
     #define ENABLE_RGB_MATRIX_TYPING_HEATMAP
     #define ENABLE_RGB_MATRIX_RAINBOW_BEACON
 
-    #define RGB_MATRIX_TYPING_HEATMAP_DECREASE_DELAY_MS 50
+    #define RGB_MATRIX_TYPING_HEATMAP_DECREASE_DELAY_MS 25
+
     #ifndef RGB_MATRIX_MAXIMUM_BRIGHTNESS
         #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 175
     #endif
-    #define RGB_MATRIX_SLEEP
 #endif
+
+// This is needed to make all LEDs addressable it seems, or maybe it's just for making the indicator callback trigger?
+#define SPLIT_LAYER_STATE_ENABLE
 
 // https://docs.qmk.fm/config_options#behaviors-that-can-be-configured
 #define TAPPING_TERM_PER_KEY

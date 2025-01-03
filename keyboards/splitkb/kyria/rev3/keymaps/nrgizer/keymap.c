@@ -218,18 +218,28 @@ tap_dance_action_t tap_dance_actions[] = {
 
 #ifdef RGB_MATRIX_ENABLE
 void keyboard_post_init_user(void) {
+    rgb_matrix_reload_from_eeprom();
     rgb_matrix_enable_noeeprom();
     rgb_matrix_sethsv_noeeprom(HSV_BASE);
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch(get_highest_layer(state)) {
         case _RUNNER:
+            rgb_matrix_sethsv_noeeprom(HSV_BLUE);
             rgb_matrix_mode_noeeprom(RGB_MATRIX_BREATHING); // Set to breathing mode
             break;
-        default:
-            rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR); // Set to solid color mode
+        case _SWE:
+            rgb_matrix_reload_from_eeprom();
+            rgb_matrix_sethsv_noeeprom(HSV_SWE);
+            break;
+        case _DAN:
+            rgb_matrix_reload_from_eeprom();
+            rgb_matrix_sethsv_noeeprom(HSV_DAN);
+            break;
+        case _COLEMAK:
+            rgb_matrix_reload_from_eeprom();
+            rgb_matrix_sethsv_noeeprom(HSV_BASE);
             break;
     }
     return state;
@@ -240,16 +250,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch(get_highest_layer(layer_state|default_layer_state)) {
         case _RUNNER:
-            rgb_matrix_sethsv_noeeprom(HSV_BLUE);
             break;
         case _SWE:
-            rgb_matrix_sethsv_noeeprom(HSV_SWE);
             break;
         case _DAN:
-            rgb_matrix_sethsv_noeeprom(HSV_DAN);
             break;
         default:
-            rgb_matrix_sethsv_noeeprom(HSV_BASE);
             break;
     }
     return false;
@@ -293,11 +299,9 @@ void keyboard_post_init_user(void){
     rgblight_enable_noeeprom();
     rgblight_set_hsv_and_mode(HSV_BASE, RGBLIGHT_MODE_STATIC_LIGHT);
 }
-#endif
 
 uint8_t last_rgb_layer = _COLEMAK;
 
-#ifdef RGBLIGHT_ENABLE
 layer_state_t layer_state_set_user(layer_state_t state) {
     uint8_t layer = get_highest_layer(state);
 
