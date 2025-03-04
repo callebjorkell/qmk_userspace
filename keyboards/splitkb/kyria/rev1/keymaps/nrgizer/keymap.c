@@ -417,6 +417,9 @@ bool oled_task_user(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
+    // FIXME: This is for the rev1 that has the encoder "flipped"
+    clockwise = !clockwise;
+
     if (index == 0) {
         switch (get_highest_layer(layer_state)) {
             case _COLEMAK:
